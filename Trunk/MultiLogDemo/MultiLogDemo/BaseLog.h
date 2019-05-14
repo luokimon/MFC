@@ -1,0 +1,30 @@
+#pragma once
+class CBaseLog
+{
+public:
+	CBaseLog();
+	virtual ~CBaseLog();
+
+protected:
+	CString m_content;
+
+public:
+	virtual CString GetExtension() = 0;
+
+	virtual void WriteLine(LPCTSTR str, COLORREF color = 0) = 0;
+	virtual void WriteData(LPCTSTR str, COLORREF color = 0) = 0;
+
+	virtual void AddBodyStart() {}
+	virtual void AddBodyEnd() {}
+
+	virtual void AddTableStart() {}
+	virtual void AddTableEnd() {}
+
+	virtual void AddTableRowStart() {}
+	virtual void AddTableRowEnd() {}
+
+	virtual void AddTableUnitData(CString& dat, COLORREF color = 0) = 0;
+
+	virtual CString& GetContent() { return m_content; }
+};
+
