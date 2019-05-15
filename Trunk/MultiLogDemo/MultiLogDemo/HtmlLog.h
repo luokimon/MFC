@@ -10,6 +10,8 @@ public:
 private:
 	int m_cellWidth;
 	int m_tblBorderThickness;
+	CString m_htmlLog;
+
 private:
 
 	UINT ColorToHex(COLORREF color);
@@ -22,8 +24,8 @@ public:
 	void WriteLine(LPCTSTR str, COLORREF color = 0);
 	void WriteData(LPCTSTR str, COLORREF color = 0);
 
-	void AddBodyStart();
-	void AddBodyEnd();
+	CString GetBodyStart();
+	CString GetBodyEnd();
 
 	void AddTableStart();
 	void AddTableEnd();
@@ -32,5 +34,8 @@ public:
 	void AddTableRowEnd();
 
 	void AddTableUnitData(CString& dat, COLORREF color = 0);
+
+	PBYTE GetContent();
+	UINT GetLength();
 };
 

@@ -42,6 +42,9 @@
     <ClInclude Include="FileHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProcedureLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MultiLogDemo.cpp">
@@ -63,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcedureLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

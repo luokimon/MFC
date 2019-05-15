@@ -36,7 +36,11 @@
 
 
 
-
+#include "BaseLog.h"
+#include "HtmlLog.h"
+#include "TextLog.h"
+#include "ProcedureLog.h"
+#include "FileHelper.h"
 
 
 

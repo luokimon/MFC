@@ -14,9 +14,6 @@ public:
 	virtual void WriteLine(LPCTSTR str, COLORREF color = 0) = 0;
 	virtual void WriteData(LPCTSTR str, COLORREF color = 0) = 0;
 
-	virtual void AddBodyStart() {}
-	virtual void AddBodyEnd() {}
-
 	virtual void AddTableStart() {}
 	virtual void AddTableEnd() {}
 
@@ -25,6 +22,7 @@ public:
 
 	virtual void AddTableUnitData(CString& dat, COLORREF color = 0) = 0;
 
-	virtual CString& GetContent() { return m_content; }
+	virtual PBYTE GetContent() { return (PBYTE)m_content.GetBuffer(); }
+	virtual UINT GetLength() { return m_content.GetLength(); }
 };
 

@@ -26,10 +26,9 @@ void CHtmlLog::WriteData(LPCTSTR dat, COLORREF color)
 	m_content += str;
 }
 
-void CHtmlLog::AddBodyStart()
+CString CHtmlLog::GetBodyStart()
 {
-	CString str;
-	str.Format(_T("<!DOCTYPE HTML>\r\n \
+	return _T("<!DOCTYPE HTML>\r\n \
 		<html>\r\n \
 		<head>\r\n \
 		<basefont face=\"Courier New\" size=\"2.5\"/>\r\n \
@@ -37,16 +36,12 @@ void CHtmlLog::AddBodyStart()
 		<title>TSP Inspector Log</title>\r\n \
 		</head>\r\n \
 		<body>\r\n \
-		<a style=\"display:scroll; position:fixed; bottom:10px; right:10px; \" href=\"#\" title=Top>Top</a>\r\n"));
-
-	m_content += str;
+		<a style=\"display:scroll; position:fixed; bottom:10px; right:10px; \" href=\"#\" title=Top>Top</a>\r\n");
 }
 
-void CHtmlLog::AddBodyEnd()
+CString CHtmlLog::GetBodyEnd()
 {
-	CString str;
-	str.Format(_T("</body>\r\n</html>\r\n"));
-	m_content += str;
+	return _T("</body>\r\n</html>\r\n");
 }
 
 void CHtmlLog::AddTableStart() 
@@ -84,4 +79,16 @@ void CHtmlLog::AddTableUnitData(CString& dat, COLORREF color)
 	CString str;
 	str.Format(_T("<td width=\"%d\"><Font color=\"#%06X\">%s</Font></td>\r\n"), m_cellWidth, ColorToHex(color),dat);
 	m_content += str;
+}
+
+PBYTE CHtmlLog::GetContent()
+{
+	m_htmlLog = GetBodyStart() + m_content + GetBodyEnd();
+	return (PBYTE)m_htmlLog.GetBuffer();
+}
+
+UINT CHtmlLog::GetLength()
+{
+	m_htmlLog = GetBodyStart() + m_content + GetBodyEnd();
+	return m_htmlLog.GetLength();
 }

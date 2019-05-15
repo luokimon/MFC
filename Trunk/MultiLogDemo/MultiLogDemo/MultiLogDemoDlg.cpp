@@ -6,9 +6,8 @@
 #include "MultiLogDemo.h"
 #include "MultiLogDemoDlg.h"
 #include "afxdialogex.h"
-#include "TextLog.h"
-#include "HtmlLog.h"
-#include "FileHelper.h"
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -162,87 +161,94 @@ HCURSOR CMultiLogDemoDlg::OnQueryDragIcon()
 void CMultiLogDemoDlg::OnBnClickedButtonHtml()
 {
 	// TODO: Add your control notification handler code here
-	CBaseLog* log;
+	CProcedureLog log;
+	log.CreateLogInstance(PROCEDURE_LOG_TYPE::pltHTML);
 
-	log = new CHtmlLog();
+	log.WriteLine(_T("Test WriteLine"), RGB(0, 255, 0));
 
-	log->AddBodyStart();
+	log.WriteData(_T("Test WriteData"), RGB(255, 0, 0));
+	log.WriteLine(_T(""));
 
-	log->WriteLine(_T("Test WriteLine"));
+	PUINT array = new UINT[16];
+	ZeroMemory(array, 16 * sizeof(UINT));
+	PBYTE valid = new BYTE[16];
+	memset(valid, 0x01, 16);
+	valid[5] = 0;
+	valid[9] = 0;
+	log.WriteArray(16, array, valid);
+	delete array;
+	delete valid;
 
-	log->WriteData(_T("Test WriteData"));
-	log->WriteLine(_T(""));
-
-	log->AddTableStart();
-	log->AddTableRowStart();
-	for (int i = 0; i < 10; i++)
+	USHORT** table = new USHORT*[16];
+	BYTE** validTable = new BYTE*[16];
+	for (int i = 0; i < 16; i++)
 	{
-		CString str;
-		str.Format(_T("%d,"), i);
-		log->AddTableUnitData(str);
-	}
-	log->AddTableRowEnd();
+		table[i] = new USHORT[28];
+		ZeroMemory(table[i], 28 * sizeof(USHORT));
 
-	log->AddTableRowStart();
-	for (int i = 0; i < 10; i++)
+		validTable[i] = new BYTE[28];
+		memset(validTable[i], 0x01, 28);
+		validTable[i][i] = 0;
+	}
+
+	log.WriteTable(16, 28, table, validTable);
+
+	for (int i = 0; i < 16; i++)
 	{
-		CString str;
-		str.Format(_T("%d,"), i);
-		log->AddTableUnitData(str, RGB(0, 255, 0));		
+		delete[] table[i];
+		delete[] validTable[i];
 	}
-	log->AddTableRowEnd();
+	delete table;
+	delete validTable;
 
-	log->AddTableEnd();
+	CFileHelper::CreateDataLog(log.GetContent(), log.GetLength(), _T("Html"));
 
-	log->AddBodyEnd();
-
-	CFileHelper::CreateDataLog((PBYTE)log->GetContent().GetBuffer(), log->GetContent().GetLength(), _T("Html"));
-
-	delete log;
-	log = NULL;
 }
 
 
 void CMultiLogDemoDlg::OnBnClickedButtonText()
 {
 	// TODO: Add your control notification handler code here
-	CBaseLog* log;
 
-	log = new CTextLog();
+	CProcedureLog log;
+	log.CreateLogInstance(PROCEDURE_LOG_TYPE::pltTEXT);
 
-	log->AddBodyStart();
+	log.WriteLine(_T("Test WriteLine"), RGB(0, 255, 0));
 
-	log->WriteLine(_T("Test WriteLine"));
+	log.WriteData(_T("Test WriteData"), RGB(255, 0, 0));
+	log.WriteLine(_T(""));
 
-	log->WriteData(_T("Test WriteData"));
-	log->WriteLine(_T(""));
+	PUINT array = new UINT[16];
+	ZeroMemory(array, 16 * sizeof(UINT));
+	PBYTE valid = new BYTE[16];
+	memset(valid, 0x01, 16);
+	valid[5] = 0;
+	valid[9] = 0;
+	log.WriteArray(16, array, valid);
+	delete array;
+	delete valid;
 
-	log->AddTableStart();
-	log->AddTableRowStart();
-	for (int i = 0; i < 10; i++)
+	USHORT** table = new USHORT*[16];
+	BYTE** validTable = new BYTE*[16];
+	for (int i = 0; i < 16; i++)
 	{
-		CString str;
-		str.Format(_T("%d, "), i);
-		log->AddTableUnitData(str);
-	}
-	log->AddTableRowEnd();
+		table[i] = new USHORT[28];
+		ZeroMemory(table[i], 28 * sizeof(USHORT));
 
-	log->AddTableRowStart();
-	for (int i = 0; i < 10; i++)
+		validTable[i] = new BYTE[28];
+		memset(validTable[i], 0x01, 28);
+		validTable[i][i] = 0;
+	}
+
+	log.WriteTable(16, 28, table, validTable);
+
+	for (int i = 0; i < 16; i++)
 	{
-		CString str;
-		str.Format(_T("%d, "), i);
-		log->AddTableUnitData(str, RGB(0, 255, 0));
+		delete[] table[i];
+		delete[] validTable[i];
 	}
-	log->AddTableRowEnd();
+	delete table;
+	delete validTable;
 
-	log->AddTableEnd();
-
-	log->AddBodyEnd();
-
-
-	CFileHelper::CreateDataLog((PBYTE)log->GetContent().GetBuffer(), log->GetContent().GetLength(), _T("Text"));
-
-	delete log;
-	log = NULL;
+	CFileHelper::CreateDataLog(log.GetContent(), log.GetLength(), _T("Text"));
 }
