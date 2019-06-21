@@ -38,5 +38,6 @@ public:
 	HTREEITEM CTreeCtrlEx::InsertItemAndSetImage(LPCTSTR lpszItem,
 		HTREEITEM hParent = TVI_ROOT, HTREEITEM hInsertAfter = TVI_LAST);
 	afx_msg void OnTvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
+//	afx_msg void OnTvnBeginlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
 };
 

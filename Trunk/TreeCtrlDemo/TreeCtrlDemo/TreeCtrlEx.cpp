@@ -22,6 +22,7 @@ BEGIN_MESSAGE_MAP(CTreeCtrlEx, CTreeCtrl)
 	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 	ON_NOTIFY_REFLECT(TVN_ENDLABELEDIT, &CTreeCtrlEx::OnTvnEndlabeledit)
+//	ON_NOTIFY_REFLECT(TVN_BEGINLABELEDIT, &CTreeCtrlEx::OnTvnBeginlabeledit)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -331,3 +332,11 @@ void CTreeCtrlEx::OnTvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
 
 	*pResult = 0;
 }
+
+
+//void CTreeCtrlEx::OnTvnBeginlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
+//{
+//	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
+//	// TODO: Add your control notification handler code here	
+//	*pResult = 0;
+//}

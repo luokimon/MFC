@@ -9,8 +9,6 @@
 
 #pragma comment(lib, "Setupapi.lib")
 
-GUID GUID_USB_DISK = { 0x53F56307L, 0xB6BF, 0x11D0, {0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B} };
-
 CDeviceNotify::CDeviceNotify()
 {
 	m_hDev = NULL;
@@ -65,25 +63,25 @@ BOOL CDeviceNotify::RegisterNotification(HWND hWnd, DWORD flags, GUID guid)
 
 BOOL CDeviceNotify::RegisterAllNotification(HWND hWnd)
 {
-	return RegisterNotification(hWnd, DEVICE_NOTIFY_ALL_INTERFACE_CLASSES, GUID_USB_DISK);
+	std::unique_ptr<GUID> guid(new GUID);
+	return RegisterNotification(hWnd, DEVICE_NOTIFY_ALL_INTERFACE_CLASSES, *(guid.get()));
 }
 
 BOOL CDeviceNotify::RegisterSpecialNotification(GUID guid, HWND hWnd)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
-
 	return RegisterNotification(hWnd, DEVICE_NOTIFY_WINDOW_HANDLE, guid);
 }
 
-void CDeviceNotify::EnumDevice(GUID guid, CString preStr, CString inexistStr)
+BOOL CDeviceNotify::EnumDevice(GUID guid, CString preStr, CString inexistStr)
 {
-	//GUID deviceId;
-	//HidD_GetHidGuid(&deviceId);
-
 	HDEVINFO handle;
-	handle = SetupDiGetClassDevs(&guid, NULL, NULL, DIGCF_DEVICEINTERFACE | DIGCF_PRESENT); //Get only HID devices
-
-	if (INVALID_HANDLE_VALUE == handle) return;
+	handle = SetupDiGetClassDevs(&guid, NULL, NULL, DIGCF_DEVICEINTERFACE | DIGCF_PRESENT);
+	if (INVALID_HANDLE_VALUE == handle)
+	{
+		TRACE(_T("SetupDiGetClassDevs Fails\n"));
+		return FALSE;
+	}
 
 	BOOL resultEnum = FALSE;
 	BOOL resultDetail = FALSE;
@@ -97,27 +95,14 @@ void CDeviceNotify::EnumDevice(GUID guid, CString preStr, CString inexistStr)
 	do
 	{
 		DeviceInterfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
-		resultEnum = SetupDiEnumDeviceInterfaces(
-			handle,
-			NULL,
-			&guid,
-			count,
-			&DeviceInterfaceData
-		);
+		if (!SetupDiEnumDeviceInterfaces(handle, NULL, &guid, count, &DeviceInterfaceData))
+			break;
 
-		if (!resultEnum) break;
-
-		SetupDiGetDeviceInterfaceDetail(handle,
-			&DeviceInterfaceData,
-			NULL,
-			0,
-			&size,
-			NULL);
+		SetupDiGetDeviceInterfaceDetail(handle, &DeviceInterfaceData, NULL, 0, &size, NULL);
 
 		requiredSize = size;
 		std::unique_ptr<BYTE> detailData(new BYTE[requiredSize]);
 		DeviceInterfaceDetailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)detailData.get();
-		//DeviceInterfaceDetailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)malloc(requiredSize);
 		DeviceInterfaceDetailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
 		DeviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
 
@@ -169,9 +154,11 @@ void CDeviceNotify::EnumDevice(GUID guid, CString preStr, CString inexistStr)
 
 		//free(DeviceInterfaceDetailData);
 		count++;
-	} while (resultEnum);
+	} while (TRUE);
 
 	SetupDiDestroyDeviceInfoList(handle);
+
+	return TRUE;
 }
 
 /*

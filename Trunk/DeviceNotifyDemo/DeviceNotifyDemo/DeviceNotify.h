@@ -25,7 +25,7 @@ public:
 	BOOL RegisterNotification(HWND hWnd, DWORD flags, GUID guid);
 	BOOL RegisterAllNotification(HWND hWnd);
 	BOOL RegisterSpecialNotification(GUID guid, HWND hWnd);
-	void EnumDevice(GUID guid, CString preStr, CString inexistStr);
+	BOOL EnumDevice(GUID guid, CString preStr, CString inexistStr);
 	//INT GetSize();
 	//LPCSTR GetAt(INT idx);
 	//LPCSTR GetParentAt(INT idx);

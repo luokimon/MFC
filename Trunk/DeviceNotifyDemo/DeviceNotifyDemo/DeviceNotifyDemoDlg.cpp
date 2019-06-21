@@ -7,6 +7,11 @@
 #include "DeviceNotifyDemoDlg.h"
 #include "afxdialogex.h"
 
+#include "DeviceNotify.h"
+
+GUID GUID_USB_DISK = { 0x53F56307L, 0xB6BF, 0x11D0, {0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B} };
+GUID GUID_USB_HID = { 0x4D1E55B2L, 0xF16F, 0x11CF, {0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30} };
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -99,6 +104,9 @@ BOOL CDeviceNotifyDemoDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+	CDeviceNotify devNotify;
+	devNotify.EnumDevice(GUID_USB_HID, _T(""), _T(""));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
