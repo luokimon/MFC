@@ -22,7 +22,6 @@ private:
 private:
 	VOID ReleaseBuffer();
 public:
-	void SetString(const CString& str) { m_str = str; }
 	PBYTE GetBuffer() { return m_buff; }
 	PBYTE GetBufferSetLength(UINT len);
 	UINT GetSize() { return m_len; }

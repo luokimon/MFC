@@ -37,3 +37,8 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 
+//#include <stdlib.h>
+#include "SafeBuff.h"
+#include "UnicodeConverter.h"
+#include "FileHelper.h"
+#include "ProcedureLog.h"

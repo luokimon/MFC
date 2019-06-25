@@ -100,7 +100,6 @@ BOOL CMFCExtensionDllDemoDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	CSafeBuff buff(10);
-	buff.SetString(_T("Test"));
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 

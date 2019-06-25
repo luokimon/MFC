@@ -35,6 +35,8 @@
 
 
 #include "../MFCExtension/SafeBuff.h"
+#include "../MFCExtension/FileHelper.h"
+#include "../MFCExtension/ProcedureLog.h"
 
 #ifdef DEBUG
 #pragma comment(lib, "../Debug/MFCExtension.lib")
