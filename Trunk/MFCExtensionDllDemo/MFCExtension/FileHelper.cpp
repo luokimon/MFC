@@ -38,9 +38,6 @@ BOOL CFileHelper::CompareExtentionNoCase(const CString& csFile, const CString& c
 	//TCHAR fileName[MAX_PATH];
 	TCHAR ext[MAX_PATH];
 
-	//_splitpath_s(csFile, drive, MAX_PATH, dir, MAX_PATH, fileName, MAX_PATH, ext, MAX_PATH);
-	CUnicodeConverter cvt;
-	CString str(csFile);
 #ifdef UNICODE
 	_wsplitpath_s(csFile, NULL, 0, NULL, 0, NULL, 0, ext, MAX_PATH);
 #else

@@ -38,6 +38,7 @@ char* CUnicodeConverter::WcharToChar(const wchar_t* wc)
 	return m_char;
 }
 
+
 wchar_t* CUnicodeConverter::CharToWchar(const char* c)
 {
 	Release();

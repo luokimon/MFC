@@ -1,12 +1,5 @@
 #pragma once
 
-//#ifdef  _DLL_LIB_EXPORT_
-//#define  DLL_EXPORT   __declspec(dllexport)
-//#else
-//#define  DLL_EXPORT   __declspec(dllimport)
-//#endif
-
-//class DLL_EXPORT CSafeBuff
 class AFX_EXT_CLASS CSafeBuff
 {
 public:
