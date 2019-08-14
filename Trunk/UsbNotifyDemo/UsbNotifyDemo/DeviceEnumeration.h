@@ -12,6 +12,7 @@ private:
 	CCriticalSection m_criticalArrival;
 	CArray<CEnumerationPackage*, CEnumerationPackage*> m_ClassGuidArray;
 	CDeviceGroupList* m_devGroupList;
+	CWinThread* m_hThread;
 private:
 	BOOL GetRunningState();
 	BOOL GetNewArrival();

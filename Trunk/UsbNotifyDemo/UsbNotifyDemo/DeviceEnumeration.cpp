@@ -17,12 +17,16 @@ UINT EnumerateProc(PVOID lParam)
 
 CDeviceEnumeration::CDeviceEnumeration()
 {
-	m_devGroupList = new CDeviceGroupList();
+	m_devGroupList = NULL;
+	m_hThread = NULL;
 }
 
 
 CDeviceEnumeration::~CDeviceEnumeration()
 {
+	SetRunningState(FALSE);
+	WaitForSingleObject(m_hThread->m_hThread, INFINITE);
+
 	for (int i = 0; i < m_ClassGuidArray.GetCount(); i++)
 	{
 		delete m_ClassGuidArray[i];
@@ -35,7 +39,7 @@ CDeviceEnumeration::~CDeviceEnumeration()
 void CDeviceEnumeration::DelegateTask()
 {
 	SetRunningState(TRUE);
-	AfxBeginThread(EnumerateProc, this);
+	m_hThread = AfxBeginThread(EnumerateProc, this);
 }
 
 BOOL CDeviceEnumeration::GetRunningState()
@@ -81,7 +85,8 @@ void CDeviceEnumeration::Enumerate()
 		if (GetNewArrival())
 		{
 			SetNewArrival(FALSE);
-			m_devGroupList->RemoveAll();
+			//m_devGroupList->RemoveAll();
+			m_devGroupList = new CDeviceGroupList();
 			for (int i = 0; i < m_ClassGuidArray.GetCount(); i++)
 			{
 				EnumDevice(m_ClassGuidArray[i]->GetGuid(),
@@ -93,7 +98,7 @@ void CDeviceEnumeration::Enumerate()
 		}
 		else
 		{
-			Sleep(5);
+			Sleep(10);
 		}
 	}
 }

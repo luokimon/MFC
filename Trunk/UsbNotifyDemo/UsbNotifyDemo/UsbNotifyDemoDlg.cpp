@@ -110,6 +110,7 @@ BOOL CUsbNotifyDemoDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	VariableInitialization();
 	RegisterNotification();
 	InitialEnumeration();
 
@@ -163,6 +164,11 @@ void CUsbNotifyDemoDlg::OnPaint()
 HCURSOR CUsbNotifyDemoDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+void CUsbNotifyDemoDlg::VariableInitialization()
+{
+	m_pDevGroupList = NULL;
 }
 
 BOOL CUsbNotifyDemoDlg::RegisterNotification()
@@ -247,18 +253,20 @@ LRESULT CUsbNotifyDemoDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam
 void CUsbNotifyDemoDlg::OnClose()
 {
 	// TODO: Add your message handler code here and/or call default
-	m_devEnumeration.SetRunningState(FALSE);
 
 	CDialogEx::OnClose();
 }
 
 LRESULT CUsbNotifyDemoDlg::OnDeviceGroupUpdate(WPARAM wParam, LPARAM lParam)
 {
-	CDeviceGroupList* grp = (CDeviceGroupList*)wParam;
+	if (NULL != m_pDevGroupList)
+		delete m_pDevGroupList;
+	m_pDevGroupList = (CDeviceGroupList*)wParam;
 
-	for (int i = 0; i < grp->GetCount(); i++)
+	for (int i = 0; i < m_pDevGroupList->GetCount(); i++)
 	{
-		TRACE(_T("[%s]- %s \n"), grp->GetAt(i)->GetHubName(), grp->GetAt(i)->GetNodeName());
+		//TRACE(_T("[%s]- %s \n"), grp->GetAt(i)->GetHubName(), grp->GetAt(i)->GetNodeName());
+		TRACE(_T("[%s]- %s \n"), (*m_pDevGroupList)[i]->GetHubName(), (*m_pDevGroupList)[i]->GetNodeName());
 	}
 
 	return 0;

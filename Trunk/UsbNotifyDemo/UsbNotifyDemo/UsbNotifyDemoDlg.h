@@ -36,7 +36,9 @@ private:
 	CDeviceNotify m_devNotify;
 	CDeviceEnumeration m_devEnumeration;
 	CDeviceManager m_devManager;
+	CDeviceGroupList* m_pDevGroupList;
 private:
+	void VariableInitialization();
 	BOOL RegisterNotification();
 	void InitialEnumeration();
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
