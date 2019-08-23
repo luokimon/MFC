@@ -32,5 +32,6 @@ public:
 	void RemoveAll();
 	UINT GetCount();
 	CDeviceGroup* GetAt(UINT idx);
+	CString GetHubName(CString& name);
 	virtual CDeviceGroup* operator [](int idx);
 };

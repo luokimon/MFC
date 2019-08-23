@@ -35,12 +35,20 @@
 
 
 #define WMU_DEVICE_GROUP_UPDATE			(WM_USER + 100)
-
+#define WMU_SPECIFIC_DEVICE_UPDATE		(WM_USER + 101)
 
 
 #include <Dbt.h>
 #include <memory>
 
+/*
+#include "../UsbBase/DeviceBase.h"
+#include "../UsbBase/HIDDevice.h"
+#include "../UsbBase/MSDevice.h"
+#include "../UsbBase/BridgeInfo.h"
+#include "../UsbBase/DeviceInfo.h"
+#include "../UsbBase/DeviceInfo30.h"
+*/
 #include "DeviceGroup.h"
 #include "EnumerationPackage.h"
 #include "DeviceInformation.h"
@@ -50,8 +58,11 @@
 #include "DeviceManager.h"
 #include "DeviceEnumeration.h"
 
-
-
+//#ifdef DEBUG
+//#pragma comment(lib, "../Debug/UsbBase.lib")
+//#else
+//#pragma comment(lib, "../Release/UsbBase.lib")
+//#endif
 
 #ifdef _UNICODE
 #if defined _M_IX86

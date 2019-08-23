@@ -36,7 +36,7 @@ private:
 	CDeviceNotify m_devNotify;
 	CDeviceEnumeration m_devEnumeration;
 	CDeviceManager m_devManager;
-	CDeviceGroupList* m_pDevGroupList;
+	//CDeviceGroupList* m_pDevGroupList;
 private:
 	void VariableInitialization();
 	BOOL RegisterNotification();
@@ -45,4 +45,6 @@ private:
 public:
 	afx_msg void OnClose();
 	afx_msg LRESULT OnDeviceGroupUpdate(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnSpecificDeviceUpdate(WPARAM wParam, LPARAM lParam);
+
 };

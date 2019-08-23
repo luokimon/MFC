@@ -4,21 +4,30 @@
 
 CDeviceManager::CDeviceManager()
 {
+	m_pDevGroupList = NULL;
 }
 
 
 CDeviceManager::~CDeviceManager()
 {
 	RemoveAll();
+
+	if (NULL != m_pDevGroupList)
+		delete m_pDevGroupList;
 }
 
-
-void CDeviceManager::Add(CString name)
+void CDeviceManager::Arrival(CString name)
 {
 	Remove(name);
 
 	CSpecificDevice* pDev = new CSpecificDevice(name);
-	m_devList.AddTail(pDev);
+	pDev->DelegateInitialize();
+	//m_devList.AddTail(pDev);
+}
+
+void CDeviceManager::Add(CSpecificDevice* dev)
+{
+	m_devList.AddTail(dev);
 }
 
 void CDeviceManager::Remove(CString name)
@@ -56,4 +65,12 @@ void CDeviceManager::RemoveAll()
 
 		pos = nextPos;
 	}
+}
+
+void CDeviceManager::SetDeviceGroupList(CDeviceGroupList* list)
+{
+	if (NULL != m_pDevGroupList)
+		delete m_pDevGroupList;
+
+	m_pDevGroupList = list;
 }

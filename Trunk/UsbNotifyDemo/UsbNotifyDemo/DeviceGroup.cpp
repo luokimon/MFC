@@ -68,6 +68,20 @@ CDeviceGroup* CDeviceGroupList::GetAt(UINT idx)
 	return NULL;
 }
 
+CString CDeviceGroupList::GetHubName(CString& name)
+{
+	if (NULL != m_pDevGroupList)
+	{
+		for (int i = 0; i < m_pDevGroupList->GetCount(); i++)
+		{
+			if (0 == m_pDevGroupList->GetAt(i)->GetNodeName().CompareNoCase(name))
+				return  m_pDevGroupList->GetAt(i)->GetHubName();
+		}
+	}
+	return _T("");
+}
+
+
 CDeviceGroup* CDeviceGroupList::operator [](int idx)
 {
 	if (idx >= m_pDevGroupList->GetCount())

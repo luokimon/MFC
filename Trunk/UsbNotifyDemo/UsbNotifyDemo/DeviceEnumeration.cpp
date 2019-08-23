@@ -32,8 +32,6 @@ CDeviceEnumeration::~CDeviceEnumeration()
 		delete m_ClassGuidArray[i];
 	}
 	m_ClassGuidArray.RemoveAll();
-
-	delete m_devGroupList;
 }
 
 void CDeviceEnumeration::DelegateTask()
@@ -85,7 +83,6 @@ void CDeviceEnumeration::Enumerate()
 		if (GetNewArrival())
 		{
 			SetNewArrival(FALSE);
-			//m_devGroupList->RemoveAll();
 			m_devGroupList = new CDeviceGroupList();
 			for (int i = 0; i < m_ClassGuidArray.GetCount(); i++)
 			{
@@ -197,18 +194,12 @@ void CDeviceEnumeration::EnumDevice(GUID guid, CString preStr, CString inexistSt
 				{
 					CString strName(DeviceInterfaceDetailData->DevicePath);
 					m_devGroupList->Add(DeviceInterfaceDetailData->DevicePath, GetParentName(DeviceInfoData.DevInst));
-					//CEnumerationNode node(strName, GetParentName(DeviceInfoData.DevInst));
-					//AddNode(node);
-					//TRACE("[%s] %s\n", node.GetHubName(), node.GetName());
 				}
 			}
 			else
 			{
 				CString strName(DeviceInterfaceDetailData->DevicePath);
 				m_devGroupList->Add(DeviceInterfaceDetailData->DevicePath, GetParentName(DeviceInfoData.DevInst));
-				//CEnumerationNode node(strName, GetParentName(DeviceInfoData.DevInst));
-				//AddNode(node);
-				//TRACE("[%s] %s\n", node.GetHubName(), node.GetName());
 			}
 		}
 

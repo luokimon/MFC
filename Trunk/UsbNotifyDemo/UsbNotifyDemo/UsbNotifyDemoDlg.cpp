@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CUsbNotifyDemoDlg, CDialogEx)
 	ON_WM_CLOSE()
 
 	ON_MESSAGE(WMU_DEVICE_GROUP_UPDATE, OnDeviceGroupUpdate)
+	ON_MESSAGE(WMU_SPECIFIC_DEVICE_UPDATE, OnSpecificDeviceUpdate)
 END_MESSAGE_MAP()
 
 
@@ -84,7 +85,7 @@ BOOL CUsbNotifyDemoDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// Add "About..." menu item to system menu.
+	// Arrival "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
@@ -109,7 +110,7 @@ BOOL CUsbNotifyDemoDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
+	// TODO: Arrival extra initialization here
 	VariableInitialization();
 	RegisterNotification();
 	InitialEnumeration();
@@ -168,7 +169,7 @@ HCURSOR CUsbNotifyDemoDlg::OnQueryDragIcon()
 
 void CUsbNotifyDemoDlg::VariableInitialization()
 {
-	m_pDevGroupList = NULL;
+	//m_pDevGroupList = NULL;
 }
 
 BOOL CUsbNotifyDemoDlg::RegisterNotification()
@@ -201,7 +202,7 @@ void CUsbNotifyDemoDlg::InitialEnumeration()
 
 LRESULT CUsbNotifyDemoDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	// TODO: Add your specialized code here and/or call the base class
+	// TODO: Arrival your specialized code here and/or call the base class
 	switch (message)
 	{
 	case WM_DEVICECHANGE:
@@ -218,7 +219,7 @@ LRESULT CUsbNotifyDemoDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam
 					TRACE(_T("USB-DISK CHANGE \n"));
 					if (wParam == DBT_DEVICEARRIVAL)
 					{
-						m_devManager.Add(str);
+						m_devManager.Arrival(str);
 						m_devEnumeration.SetNewArrival(TRUE);
 					}
 					else
@@ -231,7 +232,7 @@ LRESULT CUsbNotifyDemoDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam
 						TRACE(_T("USB-HID CHANGE \n"));
 						if (wParam == DBT_DEVICEARRIVAL)
 						{
-							m_devManager.Add(str);
+							m_devManager.Arrival(str);
 							m_devEnumeration.SetNewArrival(TRUE);
 						}
 						else
@@ -252,22 +253,38 @@ LRESULT CUsbNotifyDemoDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam
 
 void CUsbNotifyDemoDlg::OnClose()
 {
-	// TODO: Add your message handler code here and/or call default
-
+	// TODO: Arrival your message handler code here and/or call default
 	CDialogEx::OnClose();
 }
 
 LRESULT CUsbNotifyDemoDlg::OnDeviceGroupUpdate(WPARAM wParam, LPARAM lParam)
 {
-	if (NULL != m_pDevGroupList)
-		delete m_pDevGroupList;
-	m_pDevGroupList = (CDeviceGroupList*)wParam;
+	m_devManager.SetDeviceGroupList((CDeviceGroupList*)wParam);
 
-	for (int i = 0; i < m_pDevGroupList->GetCount(); i++)
+	for (int i = 0; i < m_devManager.m_pDevGroupList->GetCount(); i++)
 	{
 		//TRACE(_T("[%s]- %s \n"), grp->GetAt(i)->GetHubName(), grp->GetAt(i)->GetNodeName());
-		TRACE(_T("[%s]- %s \n"), (*m_pDevGroupList)[i]->GetHubName(), (*m_pDevGroupList)[i]->GetNodeName());
+		TRACE(_T("[%s]- %s \n"), (*m_devManager.m_pDevGroupList)[i]->GetHubName(), (*m_devManager.m_pDevGroupList)[i]->GetNodeName());
 	}
 
+	return 0;
+}
+
+LRESULT CUsbNotifyDemoDlg::OnSpecificDeviceUpdate(WPARAM wParam, LPARAM lParam)
+{
+	CSpecificDevice* dev = (CSpecificDevice*)wParam;
+	CString hubName = m_devManager.m_pDevGroupList->GetHubName(dev->GetName());
+	if (!hubName.IsEmpty())
+	{
+		dev->SetHubName(hubName);
+		m_devManager.Add(dev);
+
+		//TODO: 添加自动开始代码
+	}
+	else
+		delete dev;
+	
+	
+	TRACE(_T("SpecificDeviceUpdate \n"));
 	return 0;
 }
