@@ -61,6 +61,10 @@ void CWorkspaceCleanerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_RELEASE, m_ckbReleaseFolder);
 	DDX_Control(pDX, IDC_CHECK_DEBUG, m_ckbDebugFolder);
 	DDX_Control(pDX, IDC_CHECK_KEEP_EMPTY, m_ckbKeepEmptyFolder);
+	DDX_Control(pDX, IDC_CHECK_INTERMEDIATE_FILE, m_ckbIntermediateFiles);
+	DDX_Control(pDX, IDC_CHECK_OUTPUT_FILE, m_ckbOutputFiles);
+	DDX_Control(pDX, IDC_CHECK_OTHER_FILE, m_ckbOtherFiles);
+	DDX_Control(pDX, IDC_CHECK_OTHER_FOLDER, m_ckbOtherFolders);
 }
 
 BEGIN_MESSAGE_MAP(CWorkspaceCleanerDlg, CDialogEx)
@@ -214,5 +218,134 @@ void CWorkspaceCleanerDlg::OnBnClickedButtonStart()
 		return;
 	}
 
+	Clean(m_strSelectedFolder);
+}
 
+
+void CWorkspaceCleanerDlg::Clean(const CString& strPath)
+{
+	CFileFind find;
+
+	CString srcDir = strPath;
+	if (srcDir.Right(1) != "\\")
+		srcDir += "\\";
+
+	srcDir += "*.*";
+	BOOL bResult = find.FindFile(srcDir);
+	if (!bResult)
+	{
+		CString s;
+		s.Format("Error! Probably the directory\n\n%s\n\n does not exist.", strPath);
+		AfxMessageBox(s, MB_ICONSTOP);
+		return;
+	}
+
+	while (bResult)
+	{
+		bResult = find.FindNextFile();
+
+		if ((!find.IsDots()) && find.IsDirectory())
+		{
+			CString path = find.GetFilePath();
+			path.MakeUpper();
+
+			if (path.Right(8) == "\\RELEASE")
+			{
+				if (BST_CHECKED == m_ckbReleaseFolder.GetCheck())
+				{
+					RecursiveDelete(find.GetFilePath());
+
+					if (BST_CHECKED != m_ckbKeepEmptyFolder.GetCheck())
+						RemoveDirectory(find.GetFilePath());
+				}
+			}
+			else if (path.Right(6) == "\\DEBUG")
+			{
+				if (BST_CHECKED == m_ckbDebugFolder.GetCheck())
+				{
+					RecursiveDelete(find.GetFilePath());
+
+					if (BST_CHECKED != m_ckbKeepEmptyFolder.GetCheck())
+						RemoveDirectory(find.GetFilePath());
+				}
+			}
+			else if (path.Right(4) == "\\.VS")
+			{
+				if (BST_CHECKED == m_ckbOtherFolders.GetCheck())
+				{
+					RecursiveDelete(find.GetFilePath());
+
+					if (BST_CHECKED != m_ckbKeepEmptyFolder.GetCheck())
+						RemoveDirectory(find.GetFilePath());
+				}
+			}
+			else
+			{
+				Clean(find.GetFilePath());
+			}
+		}
+		else if ((!find.IsDots()) && (!find.IsDirectory()))
+		{
+			CleanFile(find.GetFilePath());
+		}
+
+	}
+
+	find.Close();
+}
+
+void CWorkspaceCleanerDlg::CleanFile(const CString& path)
+{
+	CString str = path.Right(4);
+	str.MakeLower();
+
+	// delete intermediate files
+	if (str == ".aps")
+	{
+		if(BST_CHECKED == m_ckbIntermediateFiles.GetCheck())
+			DeleteFile(path);
+	}
+
+
+	// delete output files
+	if (str == ".exe" || str == ".dll" || str == ".lib") 
+	{
+		if(BST_CHECKED == m_ckbOutputFiles.GetCheck())
+			DeleteFile(path);
+	}
+
+	// delete other files
+
+
+}
+
+void CWorkspaceCleanerDlg::RecursiveDelete(const CString& szPath)
+{
+	CFileFind find;
+	CString path = szPath;
+
+	if (path.Right(1) != "\\")
+		path += "\\";
+	path += "*.*";
+
+	BOOL bResult = find.FindFile(path);
+	while (bResult)
+	{
+		bResult = find.FindNextFile();
+		if ((!find.IsDots()) && (!find.IsDirectory()))
+		{
+			CString str;
+			str.Format("Deleting file %s", find.GetFilePath());
+			DeleteFile(find.GetFilePath());
+		}
+		else if (find.IsDots())
+			continue;
+		else if (find.IsDirectory())
+		{
+			path = find.GetFilePath();
+			RecursiveDelete(path);
+			RemoveDirectory(path);
+		}
+	}
+	find.Close();
 }

@@ -40,4 +40,13 @@ public:
 	afx_msg void OnBnClickedButtonStart();
 private:
 	CString m_strSelectedFolder;
+private:
+	void Clean(const CString& strPath);
+	void CleanFile(const CString& path);
+	void RecursiveDelete(const CString& szPath);
+public:
+	CButton m_ckbIntermediateFiles;
+	CButton m_ckbOutputFiles;
+	CButton m_ckbOtherFiles;
+	CButton m_ckbOtherFolders;
 };
