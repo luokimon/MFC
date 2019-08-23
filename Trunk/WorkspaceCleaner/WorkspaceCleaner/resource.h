@@ -10,15 +10,10 @@
 #define IDC_EDIT_PATH                   1001
 #define IDC_BUTTON_PATH                 1002
 #define IDC_STATIC_FOLDER               1003
-#define IDC_CHECK_RELEASE               1004
-#define IDC_CHECK_DEBUG                 1005
 #define IDC_CHECK_KEEP_EMPTY            1006
 #define IDC_BUTTON_START                1007
-#define IDC_CHECK_OUTPUT_FILE           1008
-#define IDC_CHECK_INTERMEDIATE_FILE     1009
 #define IDC_CHECK_OTHER_FILE            1010
-#define IDC_CHECK_OTHER_FOLDER          1011
-#define IDC_EDIT1                       1012
+#define IDC_EDIT_CLEAN_FILTER           1012
 
 // Next default values for new objects
 // 

@@ -58,13 +58,9 @@ CWorkspaceCleanerDlg::CWorkspaceCleanerDlg(CWnd* pParent /*=nullptr*/)
 void CWorkspaceCleanerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_CHECK_RELEASE, m_ckbReleaseFolder);
-	DDX_Control(pDX, IDC_CHECK_DEBUG, m_ckbDebugFolder);
 	DDX_Control(pDX, IDC_CHECK_KEEP_EMPTY, m_ckbKeepEmptyFolder);
-	DDX_Control(pDX, IDC_CHECK_INTERMEDIATE_FILE, m_ckbIntermediateFiles);
-	DDX_Control(pDX, IDC_CHECK_OUTPUT_FILE, m_ckbOutputFiles);
-	DDX_Control(pDX, IDC_CHECK_OTHER_FILE, m_ckbOtherFiles);
-	DDX_Control(pDX, IDC_CHECK_OTHER_FOLDER, m_ckbOtherFolders);
+	DDX_Control(pDX, IDC_EDIT_CLEAN_FILTER, m_edtCleanFilter);
+	DDX_Control(pDX, IDC_EDIT_PATH, m_edtPath);
 }
 
 BEGIN_MESSAGE_MAP(CWorkspaceCleanerDlg, CDialogEx)
@@ -73,6 +69,7 @@ BEGIN_MESSAGE_MAP(CWorkspaceCleanerDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_PATH, &CWorkspaceCleanerDlg::OnBnClickedButtonPath)
 	ON_BN_CLICKED(IDC_BUTTON_START, &CWorkspaceCleanerDlg::OnBnClickedButtonStart)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -108,6 +105,11 @@ BOOL CWorkspaceCleanerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+	CString title;
+	title.Format(_T("WorkspaceCleaner%s"), CAppHelper::GetFileVersion());
+	this->SetWindowText(title);
+	LoadSetting();	
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -199,8 +201,8 @@ void CWorkspaceCleanerDlg::OnBnClickedButtonPath()
 	strDirectoryPath.ReleaseBuffer();
 	if (strDirectoryPath.IsEmpty())
 		return;
-	if (strDirectoryPath.Right(1) != "\\")
-		strDirectoryPath += "\\";
+	if (strDirectoryPath.Right(1) != _T("\\"))
+		strDirectoryPath += _T("\\");
 
 	m_strSelectedFolder = strDirectoryPath;
 	SetDlgItemText(IDC_EDIT_PATH, m_strSelectedFolder);
@@ -218,6 +220,8 @@ void CWorkspaceCleanerDlg::OnBnClickedButtonStart()
 		return;
 	}
 
+	ParsingFilter();
+
 	Clean(m_strSelectedFolder);
 }
 
@@ -225,17 +229,18 @@ void CWorkspaceCleanerDlg::OnBnClickedButtonStart()
 void CWorkspaceCleanerDlg::Clean(const CString& strPath)
 {
 	CFileFind find;
+	BOOL bFilterFolder;
 
 	CString srcDir = strPath;
-	if (srcDir.Right(1) != "\\")
-		srcDir += "\\";
+	if (srcDir.Right(1) != _T("\\"))
+		srcDir += _T("\\");
 
-	srcDir += "*.*";
+	srcDir += _T("*.*");
 	BOOL bResult = find.FindFile(srcDir);
 	if (!bResult)
 	{
 		CString s;
-		s.Format("Error! Probably the directory\n\n%s\n\n does not exist.", strPath);
+		s.Format(_T("Error! Probably the directory\n\n%s\n\n does not exist."), strPath);
 		AfxMessageBox(s, MB_ICONSTOP);
 		return;
 	}
@@ -249,46 +254,27 @@ void CWorkspaceCleanerDlg::Clean(const CString& strPath)
 			CString path = find.GetFilePath();
 			path.MakeUpper();
 
-			if (path.Right(8) == "\\RELEASE")
+			bFilterFolder = FALSE;
+			for (int i = 0; i < m_CleanFolderArray.GetCount(); i++)
 			{
-				if (BST_CHECKED == m_ckbReleaseFolder.GetCheck())
+				UINT idx = path.Find(m_CleanFolderArray[i]);
+				idx = path.GetLength() - m_CleanFolderArray[i].GetLength();
+				if (path.Find(m_CleanFolderArray[i]) == path.GetLength() - m_CleanFolderArray[i].GetLength())
 				{
+					bFilterFolder = TRUE;
 					RecursiveDelete(find.GetFilePath());
-
 					if (BST_CHECKED != m_ckbKeepEmptyFolder.GetCheck())
 						RemoveDirectory(find.GetFilePath());
 				}
 			}
-			else if (path.Right(6) == "\\DEBUG")
-			{
-				if (BST_CHECKED == m_ckbDebugFolder.GetCheck())
-				{
-					RecursiveDelete(find.GetFilePath());
 
-					if (BST_CHECKED != m_ckbKeepEmptyFolder.GetCheck())
-						RemoveDirectory(find.GetFilePath());
-				}
-			}
-			else if (path.Right(4) == "\\.VS")
-			{
-				if (BST_CHECKED == m_ckbOtherFolders.GetCheck())
-				{
-					RecursiveDelete(find.GetFilePath());
-
-					if (BST_CHECKED != m_ckbKeepEmptyFolder.GetCheck())
-						RemoveDirectory(find.GetFilePath());
-				}
-			}
-			else
-			{
+			if(!bFilterFolder)
 				Clean(find.GetFilePath());
-			}
 		}
 		else if ((!find.IsDots()) && (!find.IsDirectory()))
 		{
 			CleanFile(find.GetFilePath());
 		}
-
 	}
 
 	find.Close();
@@ -299,24 +285,12 @@ void CWorkspaceCleanerDlg::CleanFile(const CString& path)
 	CString str = path.Right(4);
 	str.MakeLower();
 
-	// delete intermediate files
-	if (str == ".aps")
+	// delete files
+	for (int i = 0; i < m_CleanFileArray.GetCount(); i++)
 	{
-		if(BST_CHECKED == m_ckbIntermediateFiles.GetCheck())
+		if(str == m_CleanFileArray[i])
 			DeleteFile(path);
 	}
-
-
-	// delete output files
-	if (str == ".exe" || str == ".dll" || str == ".lib") 
-	{
-		if(BST_CHECKED == m_ckbOutputFiles.GetCheck())
-			DeleteFile(path);
-	}
-
-	// delete other files
-
-
 }
 
 void CWorkspaceCleanerDlg::RecursiveDelete(const CString& szPath)
@@ -324,9 +298,9 @@ void CWorkspaceCleanerDlg::RecursiveDelete(const CString& szPath)
 	CFileFind find;
 	CString path = szPath;
 
-	if (path.Right(1) != "\\")
-		path += "\\";
-	path += "*.*";
+	if (path.Right(1) != _T("\\"))
+		path += _T("\\");
+	path += _T("*.*");
 
 	BOOL bResult = find.FindFile(path);
 	while (bResult)
@@ -335,7 +309,7 @@ void CWorkspaceCleanerDlg::RecursiveDelete(const CString& szPath)
 		if ((!find.IsDots()) && (!find.IsDirectory()))
 		{
 			CString str;
-			str.Format("Deleting file %s", find.GetFilePath());
+			str.Format(_T("Deleting file %s"), find.GetFilePath());
 			DeleteFile(find.GetFilePath());
 		}
 		else if (find.IsDots())
@@ -348,4 +322,63 @@ void CWorkspaceCleanerDlg::RecursiveDelete(const CString& szPath)
 		}
 	}
 	find.Close();
+}
+
+void CWorkspaceCleanerDlg::ParsingFilter()
+{
+	CString str;
+	UINT idx = 0;
+	BOOL bRet = TRUE;
+	m_edtCleanFilter.GetWindowText(str);
+
+	m_CleanFolderArray.RemoveAll();
+	m_CleanFileArray.RemoveAll();
+
+	while (bRet)
+	{
+		CString item;
+		bRet = AfxExtractSubString(item, str, idx++, ',');
+		item.Trim();
+
+		if (!bRet)
+			continue;
+
+		if (-1 != item.Find(_T("*.")))
+			m_CleanFileArray.Add(item.Right(item.GetLength() - 1).MakeLower());
+		else
+			m_CleanFolderArray.Add(_T("\\")+item.MakeUpper());
+	}
+}
+
+void CWorkspaceCleanerDlg::LoadSetting()
+{
+	CString filter;
+	CString str = CAppHelper::GetCurrentAppDirectory() + _T("setting.ini");
+	GetPrivateProfileString(_T("Setting"), _T("Value"), _T("Debug, Release, *.aps"), filter.GetBufferSetLength(1024), 1024, str);
+	filter.ReleaseBuffer();
+	m_edtCleanFilter.SetWindowText(filter);
+
+	GetPrivateProfileString(_T("Setting"), _T("Path"), _T(""), m_strSelectedFolder.GetBufferSetLength(1024), 1024, str);
+	m_strSelectedFolder.ReleaseBuffer();
+	m_edtPath.SetWindowText(m_strSelectedFolder);
+}
+
+void CWorkspaceCleanerDlg::SaveSetting()
+{
+	CString filter;
+	CString str = CAppHelper::GetCurrentAppDirectory() + _T("setting.ini");
+	m_edtCleanFilter.GetWindowText(filter);
+	WritePrivateProfileString(_T("Setting"), _T("Value"), filter, str);
+
+	m_edtPath.GetWindowText(filter);
+	WritePrivateProfileString(_T("Setting"), _T("Path"), filter, str);
+}
+
+void CWorkspaceCleanerDlg::OnClose()
+{
+	// TODO: Add your message handler code here and/or call default
+	SaveSetting();
+
+
+	CDialogEx::OnClose();
 }

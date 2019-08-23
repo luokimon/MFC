@@ -40,7 +40,12 @@ public:
 	afx_msg void OnBnClickedButtonStart();
 private:
 	CString m_strSelectedFolder;
+	CStringArray m_CleanFolderArray;
+	CStringArray m_CleanFileArray;
 private:
+	void ParsingFilter();
+	void LoadSetting();
+	void SaveSetting();
 	void Clean(const CString& strPath);
 	void CleanFile(const CString& path);
 	void RecursiveDelete(const CString& szPath);
@@ -49,4 +54,7 @@ public:
 	CButton m_ckbOutputFiles;
 	CButton m_ckbOtherFiles;
 	CButton m_ckbOtherFolders;
+	CEdit m_edtCleanFilter;
+	CEdit m_edtPath;
+	afx_msg void OnClose();
 };
