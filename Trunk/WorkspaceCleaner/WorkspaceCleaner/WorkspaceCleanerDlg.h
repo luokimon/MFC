@@ -4,6 +4,13 @@
 
 #pragma once
 
+#define COLOR_RED RGB(255,0,0) 
+#define COLOR_BLUE RGB(0,0,255) 
+#define COLOR_GREEN RGB(0,255,0) 
+#define COLOR_YELLOW RGB(255,128,0) 
+#define COLOR_DialogBK RGB(240,240,240) 
+#define COLOR_BLACK RGB(0,0,0) 
+
 
 // CWorkspaceCleanerDlg dialog
 class CWorkspaceCleanerDlg : public CDialogEx
@@ -49,6 +56,7 @@ private:
 	void Clean(const CString& strPath);
 	void CleanFile(const CString& path);
 	void RecursiveDelete(const CString& szPath);
+	//void AddLog(const CString& str, COLORREF color = COLOR_BLACK);
 public:
 	CButton m_ckbIntermediateFiles;
 	CButton m_ckbOutputFiles;
@@ -57,4 +65,5 @@ public:
 	CEdit m_edtCleanFilter;
 	CEdit m_edtPath;
 	afx_msg void OnClose();
+	CRichEditCtrlEx m_reLog;
 };

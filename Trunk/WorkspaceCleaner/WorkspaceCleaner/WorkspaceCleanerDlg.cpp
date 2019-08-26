@@ -61,6 +61,7 @@ void CWorkspaceCleanerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_KEEP_EMPTY, m_ckbKeepEmptyFolder);
 	DDX_Control(pDX, IDC_EDIT_CLEAN_FILTER, m_edtCleanFilter);
 	DDX_Control(pDX, IDC_EDIT_PATH, m_edtPath);
+	DDX_Control(pDX, IDC_RICHEDIT2_LOG, m_reLog);
 }
 
 BEGIN_MESSAGE_MAP(CWorkspaceCleanerDlg, CDialogEx)
@@ -220,6 +221,12 @@ void CWorkspaceCleanerDlg::OnBnClickedButtonStart()
 		return;
 	}
 
+	m_reLog.SetReadOnly(FALSE);
+	m_reLog.SetFocus();
+	m_reLog.SetSel(0, -1);
+	m_reLog.Clear();
+	m_reLog.SetReadOnly(TRUE);
+
 	ParsingFilter();
 
 	Clean(m_strSelectedFolder);
@@ -264,7 +271,11 @@ void CWorkspaceCleanerDlg::Clean(const CString& strPath)
 					bFilterFolder = TRUE;
 					RecursiveDelete(find.GetFilePath());
 					if (BST_CHECKED != m_ckbKeepEmptyFolder.GetCheck())
+					{
+						m_reLog.AddRedText(_T("RemoveDirectory "));
+						m_reLog.AddBlackText(find.GetFilePath()+ _T("\r\n"));
 						RemoveDirectory(find.GetFilePath());
+					}
 				}
 			}
 
@@ -288,8 +299,12 @@ void CWorkspaceCleanerDlg::CleanFile(const CString& path)
 	// delete files
 	for (int i = 0; i < m_CleanFileArray.GetCount(); i++)
 	{
-		if(str == m_CleanFileArray[i])
+		if (str == m_CleanFileArray[i])
+		{
+			m_reLog.AddRedText(_T("DeleteFile "));
+			m_reLog.AddBlackText(path + _T("\r\n"));
 			DeleteFile(path);
+		}
 	}
 }
 
@@ -308,8 +323,8 @@ void CWorkspaceCleanerDlg::RecursiveDelete(const CString& szPath)
 		bResult = find.FindNextFile();
 		if ((!find.IsDots()) && (!find.IsDirectory()))
 		{
-			CString str;
-			str.Format(_T("Deleting file %s"), find.GetFilePath());
+			m_reLog.AddRedText(_T("DeleteFile "));
+			m_reLog.AddBlackText(find.GetFilePath() + _T("\r\n"));
 			DeleteFile(find.GetFilePath());
 		}
 		else if (find.IsDots())
@@ -318,6 +333,9 @@ void CWorkspaceCleanerDlg::RecursiveDelete(const CString& szPath)
 		{
 			path = find.GetFilePath();
 			RecursiveDelete(path);
+
+			m_reLog.AddRedText(_T("RemoveDirectory "));
+			m_reLog.AddBlackText(path + _T("\r\n"));
 			RemoveDirectory(path);
 		}
 	}
@@ -379,6 +397,42 @@ void CWorkspaceCleanerDlg::OnClose()
 	// TODO: Add your message handler code here and/or call default
 	SaveSetting();
 
-
 	CDialogEx::OnClose();
 }
+
+/*
+void CWorkspaceCleanerDlg::AddLog(const CString& str, COLORREF color)
+{
+
+	if (COLOR_BLACK == color)
+	{
+		m_reLog.SetSel(-1, -1);
+		m_reLog.ReplaceSel(str);
+	}
+	else
+	{
+		CHARFORMAT cf;
+		ZeroMemory(&cf, sizeof(CHARFORMAT));
+		cf.cbSize = sizeof(CHARFORMAT);
+		cf.dwMask = CFM_COLOR;
+		m_reLog.GetDefaultCharFormat(cf);
+		//cf.dwMask = CFM_BOLD | CFM_COLOR | CFM_FACE |
+		//	CFM_ITALIC | CFM_SIZE | CFM_UNDERLINE;
+		//cf.dwEffects = 0;
+		cf.crTextColor = color;
+		if (cf.dwEffects & CFE_AUTOCOLOR)
+			cf.dwEffects ^= CFE_AUTOCOLOR;
+		m_reLog.SetSel(-1, -1);
+		m_reLog.ReplaceSel(str);
+		UINT start = m_reLog.GetTextLength() - str.GetLength();
+		UINT stop = m_reLog.GetTextLength();
+		m_reLog.SetSel(start, stop);
+		//m_reLog.SetSel(m_reLog.GetTextLength() - str.GetLength(), m_reLog.GetTextLength());
+		TRACE(_T("Start: %d, Stop: %d\r\n"), start, stop);
+
+		//m_reLog.SetSel(1, 5);
+		m_reLog.SetSelectionCharFormat(cf);
+	}
+	m_reLog.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
+}
+*/

@@ -37,6 +37,7 @@
 
 #include <memory>
 #include "AppHelper.h"
+#include "RichEditCtrlEx.h"
 
 
 

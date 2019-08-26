@@ -39,7 +39,7 @@ CWorkspaceCleanerApp theApp;
 
 BOOL CWorkspaceCleanerApp::InitInstance()
 {
-	// InitCommonControlsEx() is required on Windows XP if an application
+// TODO: call AfxInitRichEdit2() to initialize richedit2 library.\n"	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
 	INITCOMMONCONTROLSEX InitCtrls;
@@ -50,6 +50,8 @@ BOOL CWorkspaceCleanerApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinApp::InitInstance();
+
+	AfxInitRichEdit();
 
 
 	AfxEnableControlContainer();
