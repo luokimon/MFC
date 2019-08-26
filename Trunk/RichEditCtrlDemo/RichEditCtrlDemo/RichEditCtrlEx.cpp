@@ -34,6 +34,10 @@ void CRichEditCtrlEx::AddErrorLog(const CString& str)
 	AddColorText(str, RGB(255, 0, 0));
 }
 
+void CRichEditCtrlEx::AddPassLog(const CString& str)
+{
+	AddColorText(str, RGB(0, 255, 0));
+}
 
 static DWORD CALLBACK StreamOutCallback(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
@@ -51,7 +55,7 @@ void CRichEditCtrlEx::SaveTo(const CString path)
 	EDITSTREAM es;
 	es.dwCookie = (DWORD)&cFile;
 	es.pfnCallback = StreamOutCallback;
-	StreamOut(SF_RTF, es);
+	StreamOut(SF_TEXT, es);
 }
 
 static DWORD CALLBACK StreamInCallback(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
@@ -69,5 +73,5 @@ void CRichEditCtrlEx::LoadFrom(const CString path)
 	EDITSTREAM es;
 	es.dwCookie = (DWORD)&cFile;
 	es.pfnCallback = StreamInCallback;
-	StreamIn(SF_RTF, es);
+	StreamIn(SF_TEXT, es);
 }

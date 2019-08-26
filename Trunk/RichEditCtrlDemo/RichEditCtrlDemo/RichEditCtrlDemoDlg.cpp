@@ -163,15 +163,7 @@ void CRichEditCtrlDemoDlg::OnBnClickedButtonAdd()
 	// TODO: Add your control notification handler code here
 	m_reLog.AddNormalLog(_T("123"));
 	m_reLog.AddErrorLog(_T("456"));
-	m_reLog.AddNormalLog(_T("123"));
-	m_reLog.AddErrorLog(_T("456"));
-	m_reLog.AddNormalLog(_T("123"));
-	m_reLog.AddErrorLog(_T("456"));
-	m_reLog.AddNormalLog(_T("123"));
-	m_reLog.AddErrorLog(_T("456"));
-	m_reLog.AddNormalLog(_T("\r\n"));
-	m_reLog.AddNormalLog(_T("123"));
-	m_reLog.AddErrorLog(_T("456"));
+	m_reLog.AddPassLog(_T("789"));
 	m_reLog.AddNormalLog(_T("123"));
 	m_reLog.AddErrorLog(_T("456"));
 	m_reLog.AddNormalLog(_T("123"));
@@ -181,37 +173,12 @@ void CRichEditCtrlDemoDlg::OnBnClickedButtonAdd()
 	m_reLog.AddNormalLog(_T("\r\n"));
 }
 
-static DWORD CALLBACK
-MyStreamOutCallback(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
-{
-	CFile* pFile = (CFile*)dwCookie;
-
-	pFile->Write(pbBuff, cb);
-	*pcb = cb;
-
-	return 0;
-}
-
-static DWORD CALLBACK
-MyStreamInCallback(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
-{
-	CFile* pFile = (CFile*)dwCookie;
-
-	*pcb = pFile->Read(pbBuff, cb);
-
-	return 0;
-}
 
 
 void CRichEditCtrlDemoDlg::OnBnClickedButtonSave()
 {
-	// TODO: Add your control notification handler code here
-	//CFile cFile(_T("Test.rtf"), CFile::modeCreate | CFile::modeWrite);
-	//EDITSTREAM es;
-	//es.dwCookie = (DWORD)&cFile;
-	//es.pfnCallback = MyStreamOutCallback;
-	//m_reLog.StreamOut(SF_RTF, es);
-	CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Rich Text(*.rtf)|*.rtf||"));
+	//CFileDialog pCFileDialog(FALSE, _T("rtf"), NULL, 0, _T("Rich Text File(*.rtf)|*.rtf||"));
+	CFileDialog pCFileDialog(FALSE, _T("txt"), NULL, 0, _T("Text File(*.txt)|*.txt||"));
 	pCFileDialog.m_ofn.lpstrTitle = _T("另存为");
 	if (IDOK == pCFileDialog.DoModal())
 	{
@@ -223,11 +190,11 @@ void CRichEditCtrlDemoDlg::OnBnClickedButtonSave()
 void CRichEditCtrlDemoDlg::OnBnClickedButtonLoad()
 {
 	// TODO: Add your control notification handler code here
-	CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Rich Text(*.rtf)|*.rtf||"));
+	//CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Rich Text File(*.rtf)|*.rtf||"));
+	CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Text File(*.txt)|*.txt||"));
 	pCFileDialog.m_ofn.lpstrTitle = _T("打开文件");
 	if (IDOK == pCFileDialog.DoModal())
 	{
 		m_reLog.LoadFrom(pCFileDialog.GetPathName());
 	}
-
 }

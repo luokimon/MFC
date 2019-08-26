@@ -13,6 +13,7 @@ private:
 public:
 	void AddNormalLog(const CString& str);
 	void AddErrorLog(const CString& str);
+	void AddPassLog(const CString& str);
 	void SaveTo(const CString path);
 	void LoadFrom(const CString path);
 };
