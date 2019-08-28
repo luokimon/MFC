@@ -400,39 +400,3 @@ void CWorkspaceCleanerDlg::OnClose()
 	CDialogEx::OnClose();
 }
 
-/*
-void CWorkspaceCleanerDlg::AddLog(const CString& str, COLORREF color)
-{
-
-	if (COLOR_BLACK == color)
-	{
-		m_reLog.SetSel(-1, -1);
-		m_reLog.ReplaceSel(str);
-	}
-	else
-	{
-		CHARFORMAT cf;
-		ZeroMemory(&cf, sizeof(CHARFORMAT));
-		cf.cbSize = sizeof(CHARFORMAT);
-		cf.dwMask = CFM_COLOR;
-		m_reLog.GetDefaultCharFormat(cf);
-		//cf.dwMask = CFM_BOLD | CFM_COLOR | CFM_FACE |
-		//	CFM_ITALIC | CFM_SIZE | CFM_UNDERLINE;
-		//cf.dwEffects = 0;
-		cf.crTextColor = color;
-		if (cf.dwEffects & CFE_AUTOCOLOR)
-			cf.dwEffects ^= CFE_AUTOCOLOR;
-		m_reLog.SetSel(-1, -1);
-		m_reLog.ReplaceSel(str);
-		UINT start = m_reLog.GetTextLength() - str.GetLength();
-		UINT stop = m_reLog.GetTextLength();
-		m_reLog.SetSel(start, stop);
-		//m_reLog.SetSel(m_reLog.GetTextLength() - str.GetLength(), m_reLog.GetTextLength());
-		TRACE(_T("Start: %d, Stop: %d\r\n"), start, stop);
-
-		//m_reLog.SetSel(1, 5);
-		m_reLog.SetSelectionCharFormat(cf);
-	}
-	m_reLog.PostMessage(WM_VSCROLL, SB_BOTTOM, 0);
-}
-*/
