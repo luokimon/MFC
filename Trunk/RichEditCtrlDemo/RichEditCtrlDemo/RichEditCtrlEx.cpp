@@ -55,7 +55,7 @@ void CRichEditCtrlEx::SaveTo(const CString path)
 	EDITSTREAM es;
 	es.dwCookie = (DWORD)&cFile;
 	es.pfnCallback = StreamOutCallback;
-	StreamOut(SF_TEXT, es);
+	StreamOut(SF_RTF, es);
 }
 
 static DWORD CALLBACK StreamInCallback(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
@@ -73,5 +73,5 @@ void CRichEditCtrlEx::LoadFrom(const CString path)
 	EDITSTREAM es;
 	es.dwCookie = (DWORD)&cFile;
 	es.pfnCallback = StreamInCallback;
-	StreamIn(SF_TEXT, es);
+	StreamIn(SF_RTF, es);
 }

@@ -177,8 +177,8 @@ void CRichEditCtrlDemoDlg::OnBnClickedButtonAdd()
 
 void CRichEditCtrlDemoDlg::OnBnClickedButtonSave()
 {
-	//CFileDialog pCFileDialog(FALSE, _T("rtf"), NULL, 0, _T("Rich Text File(*.rtf)|*.rtf||"));
-	CFileDialog pCFileDialog(FALSE, _T("txt"), NULL, 0, _T("Text File(*.txt)|*.txt||"));
+	CFileDialog pCFileDialog(FALSE, _T("rtf"), NULL, 0, _T("Rich Text File(*.rtf)|*.rtf||"));
+	//CFileDialog pCFileDialog(FALSE, _T("txt"), NULL, 0, _T("Text File(*.txt)|*.txt||"));
 	pCFileDialog.m_ofn.lpstrTitle = _T("另存为");
 	if (IDOK == pCFileDialog.DoModal())
 	{
@@ -190,8 +190,8 @@ void CRichEditCtrlDemoDlg::OnBnClickedButtonSave()
 void CRichEditCtrlDemoDlg::OnBnClickedButtonLoad()
 {
 	// TODO: Add your control notification handler code here
-	//CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Rich Text File(*.rtf)|*.rtf||"));
-	CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Text File(*.txt)|*.txt||"));
+	CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Rich Text File(*.rtf)|*.rtf||"));
+	//CFileDialog pCFileDialog(TRUE, NULL, NULL, 0, _T("Text File(*.txt)|*.txt||"));
 	pCFileDialog.m_ofn.lpstrTitle = _T("打开文件");
 	if (IDOK == pCFileDialog.DoModal())
 	{
