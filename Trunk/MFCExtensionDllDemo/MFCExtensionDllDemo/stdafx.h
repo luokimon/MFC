@@ -34,6 +34,9 @@
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
 
+
+
+/*
 #include "../MFCExtension/SafeBuff.h"
 #include "../MFCExtension/FileHelper.h"
 #include "../MFCExtension/ProcedureLog.h"
@@ -43,7 +46,35 @@
 #else
 #pragma comment(lib, "../Release/MFCExtension.lib")
 #endif 
+*/
 
+#include <Dbt.h>
+#include <memory>
+#include "setupapi.h"
+#include "cfgmgr32.h"
+#pragma comment(lib, "Setupapi.lib")
+
+#include "Global.h"
+#include "Notification/GuidHelper.h"
+#include "Notification/DeviceNotify.h"
+#include "Notification/DeviceGroupArray.h"
+#include "Notification/DeviceEnumeration.h"
+
+
+#include "../DmlHelpers/Global.h"
+#ifdef DEBUG
+#pragma comment(lib, "../Debug/DmlHelpers.lib")
+#else
+#pragma comment(lib, "../Release/DmlHelpers.lib")
+#endif 
+
+
+#include "../DmlUSB/Import.h"
+#ifdef DEBUG
+#pragma comment(lib, "../Debug/DmlUSB.lib")
+#else
+#pragma comment(lib, "../Release/DmlUSB.lib")
+#endif 
 
 
 #ifdef _UNICODE

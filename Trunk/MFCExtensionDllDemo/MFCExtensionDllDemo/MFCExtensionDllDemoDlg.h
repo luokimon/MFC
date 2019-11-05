@@ -31,4 +31,16 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CDeviceNotify m_devNotify;
+	CDeviceEnumeration m_devEnumeration;
+
+private:
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	void DeviceArrival(const CString& name);
+	void DeviceRemove(const CString& name);
+	void TestDmlHelper();
+public:
+	afx_msg LRESULT OnDeviceGroupUpdate(WPARAM wParam, LPARAM lParam);
 };

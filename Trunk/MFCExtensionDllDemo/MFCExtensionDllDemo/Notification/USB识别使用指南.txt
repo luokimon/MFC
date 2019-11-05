@@ -1,0 +1,118 @@
+1. 加载文件: 
+		DeviceNotify.h
+		DeviceNotify.cpp
+		DeviceEnumeration.h
+		DeviceEnumeration.cpp
+		DeviceGroupArray.h
+		DeviceGroupArray.cpp
+		GuidHelper.h
+		GuidHelper.cpp
+		
+2. 添加头文件(根据目录而定):
+		#include <Dbt.h>
+		#include <memory>
+		#include "setupapi.h"
+		#include "cfgmgr32.h"
+		#pragma comment(lib, "Setupapi.lib")
+		
+		#include "Notification/GuidHelper.h"
+		#include "Notification/DeviceNotify.h"
+		#include "Notification/DeviceGroupArray.h"
+		#include "Notification/DeviceEnumeration.h"
+		
+3. 添加声明
+	private:
+		CDeviceNotify m_devNotify;
+		CDeviceEnumeration m_devEnumeration;
+		
+4. 添加代码:
+		OnInitDialog 添加 
+		
+		m_devNotify.RegisterNotification(CGuidHelper::GetHostBoard(), GetSafeHwnd());
+		m_devEnumeration.AddFilter(new CEnumerationFilter(CGuidHelper::GetHostBoard(), CGuidHelper::GetHostBoardPrefix(), _T("")));
+		m_devEnumeration.SetNewArrival(TRUE);
+		m_devEnumeration.DelegateTask();
+		
+
+	
+		
+		
+5. 添加函数:
+		1. 主窗口消息捕获函数
+LRESULT CMFCExtensionDllDemoDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// TODO: Add your specialized code here and/or call the base class
+	switch (message)
+	{
+	case WM_DEVICECHANGE:
+	{
+		if ((wParam == DBT_DEVICEARRIVAL) || (wParam == DBT_DEVICEREMOVECOMPLETE))
+		{
+			PDEV_BROADCAST_HDR hDev = (PDEV_BROADCAST_HDR)lParam;
+			if (DBT_DEVTYP_DEVICEINTERFACE == hDev->dbch_devicetype)
+			{
+				DEV_BROADCAST_DEVICEINTERFACE *dbcc = (DEV_BROADCAST_DEVICEINTERFACE *)hDev;
+				CString name(dbcc->dbcc_name);
+				if (CGuidHelper::IsHostBoard(dbcc->dbcc_classguid))
+				{
+					if (wParam == DBT_DEVICEARRIVAL)
+						//TRACE(_T("USB-DISK Arrival:%s \n"), name);
+						DeviceArrival(name);
+					else
+						//TRACE(_T("USB-DISK Remove:%s \n"), name);
+						DeviceRemove(name);
+			}
+		}
+		}
+	}
+	}
+
+	return CDialogEx::WindowProc(message, wParam, lParam);
+}
+
+void CMFCExtensionDllDemoDlg::DeviceArrival(const CString& name)
+{
+	TRACE(_T("DeviceArrival: %s\r\n"), name);
+	m_devEnumeration.SetNewArrival(TRUE);
+
+	//TODO: Get Device Info Base on name
+}
+
+void CMFCExtensionDllDemoDlg::DeviceRemove(const CString& name)
+{
+	TRACE(_T("DeviceRemove: %s\r\n"), name);
+
+	//TODO: Remove Device Base on name
+}
+
+
+ON_MESSAGE(WMU_DEVICE_GROUP_UPDATE, OnDeviceGroupUpdate)
+afx_msg LRESULT OnDeviceGroupUpdate(WPARAM wParam, LPARAM lParam);
+
+LRESULT CMFCExtensionDllDemoDlg::OnDeviceGroupUpdate(WPARAM wParam, LPARAM lParam)
+{
+	CDeviceGroupArray* pGroup = (CDeviceGroupArray *)wParam;
+	
+	// Main Dialog is responsible for clearing memory
+	//delete pGroup;
+	
+
+	return 0;
+}
+
+
+6. 源文件修改
+	DeviceEnumeration.cpp 添加
+		#include "../MFCExtensionDllDemo.h"   	//app 文件
+		#include "../MFCExtensionDllDemoDlg.h"	//dlg 文件
+		
+	BOOL CDeviceEnumeration::UpdateDeviceGroups()
+	{
+		//TODO: Add Code to Notify Main Dialog
+		//CMFCExtensionDllDemoDlg* pDlg = (CMFCExtensionDllDemoDlg *)theApp.m_pMainWnd;
+		//return (0 != ::PostMessage(pDlg->m_hWnd, WMU_DEVICE_GROUP_UPDATE, (WPARAM)m_devGroupArray, NULL));	 
+	}
+	
+	
+7. 添加宏定义
+	#define WMU_DEVICE_GROUP_UPDATE		(WM_USER + 100)
