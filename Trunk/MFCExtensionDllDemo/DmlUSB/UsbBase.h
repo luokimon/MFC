@@ -45,5 +45,7 @@ public:
 	virtual BOOL SetHostTimeout(WORD val) = 0;
 	virtual BOOL SetInfoMonitor(WORD mode) = 0;
 	virtual BOOL ForceErase() = 0;
+
+	virtual BOOL ReadBulkPipe( IN  PUCHAR  Buffer, IN  ULONG   bufSize) = 0;
 };
 

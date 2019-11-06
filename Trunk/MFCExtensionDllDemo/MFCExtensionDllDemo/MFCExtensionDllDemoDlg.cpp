@@ -206,7 +206,7 @@ void CMFCExtensionDllDemoDlg::DeviceArrival(const CString& name)
 
 	usb.OpenDevice(name);
 
-	BYTE buff[128];
+	BYTE buff[1024];
 
 	buff[0] = 0x01;
 	buff[1] = 0x1C;
@@ -216,6 +216,19 @@ void CMFCExtensionDllDemoDlg::DeviceArrival(const CString& name)
 	usb.SetDeviceGroup(0x040b);
 	usb.GetDeviceID(buff, 2);
 	usb.GetDeviceInformation(buff, 128);
+	WORD len = 20 * 9 * 2 + 4;// Tx*Rx*2+sizeof(Header)
+
+
+	usb.I2CPortMonitor(0x100, len);
+	usb.SetOperationMode(0x03, 0x02);
+
+	usb.ReadData(buff, len);
+	usb.ReadData(buff, len);
+	usb.ReadData(buff, len);
+
+	usb.SetOperationMode(0, 0);
+	usb.I2CPortMonitor(0, 0);
+	
 	buff[0] = 0x00;
 	buff[1] = 0x1C;
 	buff[2] = 0x12;

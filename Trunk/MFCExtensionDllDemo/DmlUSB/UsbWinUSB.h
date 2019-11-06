@@ -8,24 +8,9 @@ public:
 	virtual ~CUsbWinUSB();
 
 private:
-	HANDLE	m_hDevice;
-	CString m_devPath;
-	INT		m_nMaxEndpoints;
-	WINUSB_INTERFACE_HANDLE m_winUsbHandle;
-	std::vector<WINUSB_PIPE_INFORMATION>* m_pipeInfoList;
+	CWinUsbWrapper* m_winUsb;
 
 private:
-	BOOL WinUsbInitialize();
-	BOOL ControlTransfer(WINUSB_SETUP_PACKET setupPacket,
-		PBYTE				 Buffer,
-		ULONG				 BufferLength,
-		PULONG				 ReadBytes);
-	BOOL ReadBulkPipe(IN  BYTE	  pipeID,
-		IN  PUCHAR  Buffer,
-		IN  ULONG   bufSize,
-		OUT PULONG  bytesRead,
-		IN  LPOVERLAPPED  Overlapped);
-
 	BOOL WriteCommand(CSetupBase& setup);
 	BOOL ReadCommand(CSetupBase& setup, PBYTE buff);
 
@@ -68,6 +53,10 @@ public:
 	BOOL SetHostTimeout(WORD val);
 	BOOL SetInfoMonitor(WORD mode);
 	BOOL ForceErase();
+
+	BOOL ReadBulkPipe(
+		IN  PUCHAR  Buffer,
+		IN  ULONG   bufSize);
 
 };
 

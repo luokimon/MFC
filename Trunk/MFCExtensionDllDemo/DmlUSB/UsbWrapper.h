@@ -61,5 +61,6 @@ public:
 	BOOL SetHostTimeout(WORD val);
 	BOOL SetInfoMonitor(WORD mode);
 	BOOL ForceErase();
+	BOOL ReadData(PBYTE buff, WORD len);
 };
 

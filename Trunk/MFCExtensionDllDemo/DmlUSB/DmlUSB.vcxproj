@@ -214,6 +214,7 @@
     </ClCompile>
     <ClCompile Include="UsbBase.cpp" />
     <ClCompile Include="UsbWrapper.cpp" />
+    <ClCompile Include="WinUsbWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DmlUSB.def" />
@@ -229,6 +230,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UsbBase.h" />
     <ClInclude Include="UsbWrapper.h" />
+    <ClInclude Include="WinUsbWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DmlUSB.rc" />

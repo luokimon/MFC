@@ -38,9 +38,11 @@
 
 #include <vector>
 #include "winusb.h"
+#include "usb100.h"
 
 #include "Global.h"
 #include "SetupBase.h"
+#include "WinUsbWrapper.h"
 #include "UsbBase.h"
 #include "UsbWinUSB.h"
 #include "UsbWrapper.h"
