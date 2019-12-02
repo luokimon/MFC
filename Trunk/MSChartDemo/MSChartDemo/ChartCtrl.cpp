@@ -1,23 +1,42 @@
 #include "stdafx.h"
 #include "ChartCtrl.h"
 
+#include "ChartAxis.h"
+
 #define CHARTCTRL_CLASSNAME    _T("ChartCtrl")
 
 CChartCtrl::CChartCtrl()
 {
 	RegisterWndClass();
+
+	m_iEnableRefresh = 1;
+	m_bPendingRefresh = false;
+
 	m_bMemDCCreated = FALSE;
 	m_BackColor = GetSysColor(COLOR_BTNFACE);
 	m_BorderColor = RGB(0, 0, 0);
 
 	m_nColumnNum = 20;
 	m_nRowNum = 9;
+
+	for (int i = 0; i < AxisMax; i++)
+		m_pAxes[i] = NULL;
 }
 
 
 CChartCtrl::~CChartCtrl()
 {
+	for (int i = 0; i < AxisMax; i++)
+	{
+		if (NULL != m_pAxes[i])
+		{
+			delete m_pAxes[i];
+			m_pAxes[i] = NULL;
+		}
+	}
 }
+
+
 BEGIN_MESSAGE_MAP(CChartCtrl, CWnd)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -76,7 +95,13 @@ void CChartCtrl::RefreshCtrl()
 	if (!GetSafeHwnd())
 		return;
 
+	if (m_iEnableRefresh < 1)
+	{
+		m_bPendingRefresh = true;
+		return;
+	}
 
+	// Retrieve the client rect and initialize the plotting rect
 	CClientDC dc(this);
 	CRect ClientRect;
 	GetClientRect(&ClientRect);
@@ -92,27 +117,49 @@ void CChartCtrl::RefreshCtrl()
 	DrawBackground(&m_BackgroundDC, ClientRect);
 	ClientRect.DeflateRect(3, 3);
 	DrawChart(&m_BackgroundDC, ClientRect);
-	DrawGrid(&m_BackgroundDC, ClientRect);
-	DrawData(&m_BackgroundDC, ClientRect);
+	//DrawGrid(&m_BackgroundDC, ClientRect);
+	//DrawData(&m_BackgroundDC, ClientRect);
 	Invalidate();
 }
 
 void CChartCtrl::DrawChart(CDC* pDC, CRect ChartRect)
 {
 	m_PlottingRect = ChartRect;
+
+	for (int i = 0; i < AxisMax; i++)
+	{
+		if (m_pAxes[i])
+		{
+			m_pAxes[i]->SetAxisSize(ChartRect, m_PlottingRect);
+			m_pAxes[i]->Recalculate();
+			m_pAxes[i]->ClipMargin(ChartRect, m_PlottingRect, pDC);
+		}
+	}
+
+	for (int i = 0; i < AxisMax; i++)
+	{
+		if (m_pAxes[i])
+		{
+			m_pAxes[i]->SetAxisSize(ChartRect, m_PlottingRect);
+			m_pAxes[i]->Recalculate();
+			m_pAxes[i]->Draw(pDC);
+		}
+	}
+
+	/*
 	CPen SolidPen(PS_SOLID, 0, m_BorderColor);
 	CPen* pOldPen = pDC->SelectObject(&SolidPen);
 
 	pDC->MoveTo(m_PlottingRect.left, m_PlottingRect.top);
-	pDC->LineTo(m_PlottingRect.right, m_PlottingRect.top);
-	pDC->LineTo(m_PlottingRect.right, m_PlottingRect.bottom);
 	pDC->LineTo(m_PlottingRect.left, m_PlottingRect.bottom);
-	pDC->LineTo(m_PlottingRect.left, m_PlottingRect.top);
-
+	pDC->LineTo(m_PlottingRect.right, m_PlottingRect.bottom);
+	//pDC->LineTo(m_PlottingRect.right, m_PlottingRect.top);
+	//pDC->LineTo(m_PlottingRect.left, m_PlottingRect.top);
 
 
 	pDC->SelectObject(pOldPen);
 	DeleteObject(SolidPen);
+	*/
 }
 
 void CChartCtrl::DrawBackground(CDC* pDC, CRect ChartRect)
@@ -211,7 +258,7 @@ void CChartCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	// TODO: Add your message handler code here
+	// Force recreation of background DC
 	if (m_BackgroundDC.GetSafeHdc())
 		m_BackgroundDC.DeleteDC();
 
@@ -230,4 +277,48 @@ void CChartCtrl::SetUnit(UINT row, UINT col)
 {
 	UINT m_nColumnNum = col;
 	UINT m_nRowNum = row;
+}
+
+
+CChartAxis* CChartCtrl::CreateAxis(EAxisPos pos)
+{
+	CChartAxis* pAxis = new CChartAxis();
+	pAxis->SetParent(this);
+	
+	if (AxisLeft == pos)
+		pAxis->SetHorizontal(false);
+	else
+		pAxis->SetHorizontal(true);
+
+	if (m_pAxes[pos])
+		delete m_pAxes[pos];
+
+	m_pAxes[pos] = pAxis;
+
+	return pAxis;
+}
+
+CChartAxis* CChartCtrl::GetLeftAxis() const
+{
+	return m_pAxes[AxisLeft];
+}
+
+CChartAxis* CChartCtrl::GetBottomAxis() const
+{
+	return m_pAxes[AxisBottom];
+}
+
+void CChartCtrl::EnableRefresh(bool bEnable)
+{
+	if (bEnable)
+		m_iEnableRefresh++;
+	else
+		m_iEnableRefresh--;
+
+	if (m_iEnableRefresh > 0 && m_bPendingRefresh)
+	{
+		m_bPendingRefresh = false;
+		RefreshCtrl();
+	}
+
 }

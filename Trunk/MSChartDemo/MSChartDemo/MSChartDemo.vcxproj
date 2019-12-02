@@ -183,7 +183,10 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ChartAxis.h" />
     <ClInclude Include="ChartCtrl.h" />
+    <ClInclude Include="ChartGrid.h" />
+    <ClInclude Include="ChartSerie.h" />
     <ClInclude Include="MSChartDemo.h" />
     <ClInclude Include="MSChartDemoDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -191,7 +194,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ChartAxis.cpp" />
     <ClCompile Include="ChartCtrl.cpp" />
+    <ClCompile Include="ChartGrid.cpp" />
+    <ClCompile Include="ChartSerie.cpp" />
     <ClCompile Include="MSChartDemo.cpp" />
     <ClCompile Include="MSChartDemoDlg.cpp" />
     <ClCompile Include="stdafx.cpp">

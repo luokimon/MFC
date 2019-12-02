@@ -102,6 +102,10 @@ BOOL CMSChartDemoDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	m_ChartCtrl.SetUnit(16, 16);
+	CChartAxis* pLeftAxis = m_ChartCtrl.CreateAxis(CChartCtrl::AxisLeft);
+	pLeftAxis->SetMinMax(0, 3000);
+	CChartAxis* pBottomAxis = m_ChartCtrl.CreateAxis(CChartCtrl::AxisBottom);
+	pBottomAxis->SetMinMax(0, 336);
 	AdjustLayout();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
