@@ -175,6 +175,17 @@ void CHexToBinDemoDlg::OnBnClickedButtonConvert()
 	// TODO: Add your control notification handler code here
 	CHexFileConverter hex(m_strFilePath);
 
-	std::unique_ptr<BYTE> buff(new BYTE[48 * 1024]);
-	hex.ToBin(buff.get());
+	std::unique_ptr<BYTE> buff(new BYTE[64 * 1024]);
+	ZeroMemory(buff.get(), 64 * 1024);
+	hex.ToBin(buff.get(), 64*1024);
+
+	CString strOutput = m_strFilePath.MakeLower();
+	if (0 != strOutput.Replace(_T(".hex"), _T(".bin")))
+	{
+		CFile file;
+		file.Open(strOutput, CFile::modeCreate | CFile::modeWrite);
+		file.Write(buff.get(), 64 * 1024);
+		file.Flush();
+		file.Close();
+	}
 }

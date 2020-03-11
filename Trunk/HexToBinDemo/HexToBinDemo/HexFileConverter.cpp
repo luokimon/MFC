@@ -1,33 +1,7 @@
 #include "stdafx.h"
 #include "HexFileConverter.h"
 
-typedef enum {
-	RES_OK = 0,
-	RES_DATA_TOO_LONG,
-	RES_DATA_TOO_SHORT,
-	RES_NO_COLON,
-	RES_TYPE_ERROR,
-	RES_LENGTH_ERROR,
-	RES_CHECK_ERROR,
-	RES_HEX_FILE_NOT_EXIST,
-	RES_HEX_FILE_NO_END
-}HEX_CONVERTER_STATUS;
 
-typedef enum {
-	hrt_DR = 0x0,	// Data Record
-	hrt_EFR = 0x1,	// End of File Record
-	hrt_ESAR = 0x2,	// Extended Segment Address Record
-	hrt_SSAR = 0x3,	// Start Segment Address Record
-	hrt_ELAR = 0x4,	// Extended Linear Address Record
-	hrt_SLAR = 0x5	// Start Linear Address Record
-}HEX_RECORD_TYPE;
-
-typedef struct {
-	BYTE len;
-	WORD addr;
-	BYTE type;
-	PBYTE data;
-}HEX_FILE_FORMAT, *PHEX_FILE_FORMAT;
 
 CHexFileConverter::CHexFileConverter()
 {
