@@ -56,6 +56,7 @@ private:
 	void Clean(const CString& strPath);
 	void CleanFile(const CString& path);
 	void RecursiveDelete(const CString& szPath);
+	void AdjustLayout();
 	//void AddLog(const CString& str, COLORREF color = COLOR_BLACK);
 public:
 	CButton m_ckbIntermediateFiles;
@@ -66,4 +67,5 @@ public:
 	CEdit m_edtPath;
 	afx_msg void OnClose();
 	CRichEditCtrlEx m_reLog;
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };

@@ -71,6 +71,8 @@ BEGIN_MESSAGE_MAP(CWorkspaceCleanerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PATH, &CWorkspaceCleanerDlg::OnBnClickedButtonPath)
 	ON_BN_CLICKED(IDC_BUTTON_START, &CWorkspaceCleanerDlg::OnBnClickedButtonStart)
 	ON_WM_CLOSE()
+	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 
@@ -111,7 +113,7 @@ BOOL CWorkspaceCleanerDlg::OnInitDialog()
 	title.Format(_T("WorkspaceCleaner%s"), CAppHelper::GetFileVersion());
 	this->SetWindowText(title);
 	LoadSetting();	
-
+	AdjustLayout();
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -372,7 +374,7 @@ void CWorkspaceCleanerDlg::LoadSetting()
 {
 	CString filter;
 	CString str = CAppHelper::GetCurrentAppDirectory() + _T("setting.ini");
-	GetPrivateProfileString(_T("Setting"), _T("Value"), _T("Debug, Release, *.aps"), filter.GetBufferSetLength(1024), 1024, str);
+	GetPrivateProfileString(_T("Setting"), _T("Value"), _T("Debug, Release, *.aps, .vs"), filter.GetBufferSetLength(1024), 1024, str);
 	filter.ReleaseBuffer();
 	m_edtCleanFilter.SetWindowText(filter);
 
@@ -398,5 +400,24 @@ void CWorkspaceCleanerDlg::OnClose()
 	SaveSetting();
 
 	CDialogEx::OnClose();
+}
+
+void CWorkspaceCleanerDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	// TODO: Add your message handler code here
+	AdjustLayout();
+}
+
+void CWorkspaceCleanerDlg::AdjustLayout()
+{
+	if (GetSafeHwnd() == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
+	{
+		return;
+	}
+
+	CRect rectClient;
+	GetClientRect(rectClient);
 }
 
